@@ -425,23 +425,23 @@ const state = {
   editingId: null, // segment currently open in modal (avoid clobbering on live re-render)
 };
 
-let supabase = null;
+let sbClient = null;
 
 async function initDb(){
   try{
     if(!window.supabase || !window.supabase.createClient) throw new Error("supabase-js not loaded");
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const [itRes, segRes] = await Promise.all([
-      supabase.from("itineraries").select("id,data"),
-      supabase.from("segments").select("id,data"),
+      sbClient.from("itineraries").select("id,data"),
+      sbClient.from("segments").select("id,data"),
     ]);
     if(itRes.error || segRes.error) throw (itRes.error || segRes.error);
 
     if(itRes.data.length === 0){
       const seeds = seedItineraries();
       state.itineraries = seeds;
-      await supabase.from("itineraries").upsert(seeds.map(it=>({id:it.id, data:it})));
+      await sbClient.from("itineraries").upsert(seeds.map(it=>({id:it.id, data:it})));
     } else {
       state.itineraries = itRes.data.map(r=>r.data);
       // Backfill: a database populated before a given seed itinerary existed
@@ -451,14 +451,14 @@ async function initDb(){
       const missing = seedItineraries().filter(it=>!presentIds.has(it.id));
       if(missing.length){
         state.itineraries.push(...missing);
-        await supabase.from("itineraries").upsert(missing.map(it=>({id:it.id, data:it})));
+        await sbClient.from("itineraries").upsert(missing.map(it=>({id:it.id, data:it})));
       }
     }
 
     if(segRes.data.length === 0){
       const seeds = seedSegments();
       state.segments = seeds;
-      await supabase.from("segments").upsert(seeds.map(s=>({id:s.id, data:s})));
+      await sbClient.from("segments").upsert(seeds.map(s=>({id:s.id, data:s})));
     } else {
       state.segments = segRes.data.map(r=>r.data);
     }
@@ -470,15 +470,15 @@ async function initDb(){
     // Realtime: any other visitor's change (insert/update/delete) is pushed
     // to every connected browser, so everyone always sees the same data —
     // no page refresh needed.
-    supabase.channel("public:itineraries")
+    sbClient.channel("public:itineraries")
       .on("postgres_changes", {event:"*", schema:"public", table:"itineraries"}, payload=>applyRealtimeChange("itineraries", payload))
       .subscribe();
-    supabase.channel("public:segments")
+    sbClient.channel("public:segments")
       .on("postgres_changes", {event:"*", schema:"public", table:"segments"}, payload=>applyRealtimeChange("segments", payload))
       .subscribe();
   }catch(e){
     console.error("Supabase init failed, falling back to local mode:", e);
-    supabase = null;
+    sbClient = null;
     state.dbMode = "local";
     if(!state.itineraries.length) state.itineraries = seedItineraries();
     if(!state.segments.length) state.segments = seedSegments();
@@ -506,22 +506,22 @@ async function saveSegment(segIn){
   const idx = state.segments.findIndex(s=>s.id===seg.id);
   if(idx>=0) state.segments[idx]=seg; else state.segments.push(seg);
   renderAll();
-  if(supabase){
-    try{ await supabase.from("segments").upsert({id:seg.id, data:seg}); }
+  if(sbClient){
+    try{ await sbClient.from("segments").upsert({id:seg.id, data:seg}); }
     catch(e){ /* keep the local optimistic copy visible even if the write failed */ }
   }
 }
 async function deleteSegment(id){
   state.segments = state.segments.filter(s=>s.id!==id);
   renderAll();
-  if(supabase){ try{ await supabase.from("segments").delete().eq("id", id); }catch(e){} }
+  if(sbClient){ try{ await sbClient.from("segments").delete().eq("id", id); }catch(e){} }
 }
 async function saveItinerary(itIn){
   const it = {...itIn};
   const idx = state.itineraries.findIndex(s=>s.id===it.id);
   if(idx>=0) state.itineraries[idx]=it; else state.itineraries.push(it);
   renderAll();
-  if(supabase){ try{ await supabase.from("itineraries").upsert({id:it.id, data:it}); }catch(e){} }
+  if(sbClient){ try{ await sbClient.from("itineraries").upsert({id:it.id, data:it}); }catch(e){} }
 }
 
 function setStatus(){
