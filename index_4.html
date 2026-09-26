@@ -1,0 +1,1410 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan Vélo La Baule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#eef2f1;
+    --surface:#ffffff;
+    --surface-2:#e4ece9;
+    --ink:#132422;
+    --ink-dim:#54655f;
+    --line:#d3ddd8;
+    --line-strong:#b8c6c0;
+    --accent:#1c5d70;
+    --accent-ink:#ffffff;
+    --accent-soft:#dbe9ec;
+    --accent-soft-ink:#154655;
+    --good:#2f7d43;
+    --good-soft:#e3f1e4;
+    --warn:#a8671c;
+    --warn-soft:#f5e9d7;
+    --bad:#b7392f;
+    --bad-soft:#f6e2df;
+
+    --c-itineraire:#d63232;
+    --c-cvcb:#c99416;
+    --c-double_sens:#b03a94;
+    --c-bande:#2657c0;
+    --c-voie_verte:#2f8f42;
+    --c-piste:#1497a3;
+
+    --font-display:'Fraunces', Georgia, serif;
+    --font-body:'IBM Plex Sans', -apple-system, sans-serif;
+    --font-mono:'IBM Plex Mono', 'SF Mono', monospace;
+    --shadow-1: 0 1px 2px rgba(19,36,34,0.06), 0 1px 1px rgba(19,36,34,0.04);
+    --shadow-2: 0 8px 24px rgba(19,36,34,0.14), 0 2px 6px rgba(19,36,34,0.08);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#101a18;
+      --surface:#17231f;
+      --surface-2:#1e2b27;
+      --ink:#e7efec;
+      --ink-dim:#9fb3ac;
+      --line:#2b3a35;
+      --line-strong:#3c4f48;
+      --accent:#5fb6c9;
+      --accent-ink:#0b1a1d;
+      --accent-soft:#1c363d;
+      --accent-soft-ink:#a9e0ec;
+      --good:#7ecb8e;
+      --good-soft:#1c3324;
+      --warn:#e5b567;
+      --warn-soft:#3a2e18;
+      --bad:#e58b81;
+      --bad-soft:#3a2320;
+      --c-itineraire:#ef6b64;
+      --c-cvcb:#e8c454;
+      --c-double_sens:#d982c4;
+      --c-bande:#7ba0ef;
+      --c-voie_verte:#7ecb8e;
+      --c-piste:#5cd0dc;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#101a18;
+    --surface:#17231f;
+    --surface-2:#1e2b27;
+    --ink:#e7efec;
+    --ink-dim:#9fb3ac;
+    --line:#2b3a35;
+    --line-strong:#3c4f48;
+    --accent:#5fb6c9;
+    --accent-ink:#0b1a1d;
+    --accent-soft:#1c363d;
+    --accent-soft-ink:#a9e0ec;
+    --good:#7ecb8e;
+    --good-soft:#1c3324;
+    --warn:#e5b567;
+    --warn-soft:#3a2e18;
+    --bad:#e58b81;
+    --bad-soft:#3a2320;
+    --c-itineraire:#ef6b64;
+    --c-cvcb:#e8c454;
+    --c-double_sens:#d982c4;
+    --c-bande:#7ba0ef;
+    --c-voie_verte:#7ecb8e;
+    --c-piste:#5cd0dc;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:14px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;text-wrap:balance;margin:0;}
+  button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;}
+  button{cursor:pointer;}
+  .num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+  a{color:var(--accent);}
+
+  #app{min-height:100vh;display:flex;flex-direction:column;}
+
+  .topbar{
+    display:flex;align-items:center;gap:16px;
+    padding:14px 22px;
+    background:var(--surface);
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:40;
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;flex:0 0 auto;}
+  .brand .mark{
+    width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--accent-ink);
+    display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:600;font-size:16px;
+    flex:none;
+  }
+  .brand h1{font-size:19px;letter-spacing:-0.01em;}
+  .brand .sub{color:var(--ink-dim);font-size:12.5px;}
+  .topbar-status{
+    margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-dim);
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--line-strong);}
+  .dot.live{background:var(--good);}
+  .dot.local{background:var(--warn);}
+
+  .shell{flex:1;display:flex;min-height:0;}
+  .sidenav{
+    width:196px;flex:none;background:var(--surface);border-right:1px solid var(--line);
+    padding:14px 10px;display:flex;flex-direction:column;gap:2px;
+  }
+  .navbtn{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 12px;border-radius:8px;border:none;background:transparent;color:var(--ink-dim);
+    font-size:13.5px;font-weight:500;text-align:left;width:100%;
+  }
+  .navbtn:hover{background:var(--surface-2);color:var(--ink);}
+  .navbtn.active{background:var(--accent-soft);color:var(--accent-soft-ink);}
+  .navbtn .n{font-family:var(--font-mono);font-size:11px;color:var(--ink-dim);width:16px;}
+  .navbtn.active .n{color:var(--accent-soft-ink);}
+  .nav-foot{margin-top:auto;padding:10px 12px;font-size:11.5px;color:var(--ink-dim);border-top:1px solid var(--line);}
+
+  main#view{flex:1;min-width:0;overflow:auto;padding:22px 26px 60px;}
+  .view-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap;}
+  .view-head h2{font-size:22px;}
+  .view-head p{color:var(--ink-dim);margin:4px 0 0;max-width:60ch;font-size:13px;}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:8px 14px;border-radius:7px;border:1px solid var(--line-strong);background:var(--surface);
+    font-size:13px;font-weight:500;color:var(--ink);
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent);}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
+  .btn.primary:hover{opacity:0.92;color:var(--accent-ink);}
+  .btn.ghost{border-color:transparent;background:transparent;}
+  .btn.ghost:hover{background:var(--surface-2);border-color:transparent;color:var(--ink);}
+  .btn.danger:hover{border-color:var(--bad);color:var(--bad);}
+  .btn.small{padding:5px 10px;font-size:12px;border-radius:6px;}
+  .seg-toggle{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;}
+  .seg-toggle button{border:none;background:var(--surface);padding:7px 12px;font-size:12.5px;font-weight:500;color:var(--ink-dim);}
+  .seg-toggle button+button{border-left:1px solid var(--line-strong);}
+  .seg-toggle button.active{background:var(--accent);color:var(--accent-ink);}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-1);}
+  .pad{padding:16px 18px;}
+
+  /* KPI tiles */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:18px;}
+  .kpi{padding:14px 16px;}
+  .kpi .lbl{font-size:11.5px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-dim);font-weight:600;}
+  .kpi .val{font-family:var(--font-mono);font-size:26px;font-weight:600;margin-top:6px;letter-spacing:-0.01em;}
+  .kpi .val small{font-size:14px;font-weight:500;color:var(--ink-dim);margin-left:2px;}
+  .kpi .cmp{font-size:11.5px;color:var(--ink-dim);margin-top:4px;}
+
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px;font-size:11.5px;font-weight:600;white-space:nowrap;}
+  .pill.realise{background:var(--good-soft);color:var(--good);}
+  .pill.en_cours{background:var(--warn-soft);color:var(--warn);}
+  .pill.prevu{background:var(--surface-2);color:var(--ink-dim);}
+  .pill.ouvert{background:var(--bad-soft);color:var(--bad);}
+  .pill.resolu{background:var(--good-soft);color:var(--good);}
+  .swatch{width:9px;height:9px;border-radius:2px;display:inline-block;flex:none;}
+
+  table.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+  table.tbl th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-dim);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line-strong);}
+  table.tbl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  table.tbl tr:last-child td{border-bottom:none;}
+  table.tbl tr.clickable:hover{background:var(--surface-2);cursor:pointer;}
+
+  /* Map view */
+  .map-wrap{display:flex;gap:16px;align-items:flex-start;}
+  .map-viewport{position:relative;flex:1;min-width:0;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-1);touch-action:none;}
+  .map-stage{position:absolute;top:0;left:0;width:100%;transform-origin:0 0;}
+  .map-stage img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none;pointer-events:none;transition:filter .15s;}
+  .map-stage img.dimmed{filter:grayscale(0.95) brightness(1.35) contrast(0.8) opacity(0.4);}
+  .map-stage svg{position:absolute;inset:0;width:100%;height:100%;}
+  .map-stage.drawing{cursor:crosshair;}
+  .map-stage.panning{cursor:grabbing;}
+  .zoom-controls{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:column;gap:5px;z-index:6;}
+  .zoom-controls button{width:32px;height:32px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface);font-size:16px;font-weight:600;box-shadow:var(--shadow-2);line-height:1;}
+  .zoom-controls button:hover{border-color:var(--accent);color:var(--accent);}
+  .nudge-pad{position:absolute;left:10px;bottom:10px;display:grid;grid-template-columns:repeat(3,28px);grid-template-rows:repeat(3,28px);gap:2px;z-index:6;}
+  .nudge-pad button{border:1px solid var(--line-strong);background:var(--surface);border-radius:6px;font-size:11px;box-shadow:var(--shadow-1);padding:0;}
+  .nudge-pad button:hover{border-color:var(--accent);color:var(--accent);}
+  .nudge-center{display:flex;align-items:center;justify-content:center;color:var(--ink-dim);font-size:13px;}
+  .bg-toggle-row{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-dim);}
+  .bg-toggle-row input{margin:0;}
+  .map-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .map-side{width:270px;flex:none;display:flex;flex-direction:column;gap:12px;}
+  .legend-list{display:flex;flex-direction:column;gap:7px;font-size:12.5px;}
+  .legend-list .row{display:flex;align-items:center;gap:8px;}
+  .legend-line{width:22px;height:0;border-top-width:3px;border-top-style:solid;flex:none;}
+  .draw-banner{background:var(--accent-soft);color:var(--accent-soft-ink);border-radius:8px;padding:10px 12px;font-size:12.5px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .unplaced{font-size:12px;color:var(--ink-dim);}
+  .unplaced ul{margin:6px 0 0;padding-left:16px;}
+  .unplaced li{margin-bottom:3px;}
+  .seg-info{padding:12px 14px;}
+  .seg-info h4{font-size:14px;margin-bottom:2px;}
+  .seg-info .meta{font-size:12px;color:var(--ink-dim);margin-bottom:8px;}
+
+  /* Dashboard chart */
+  .bars{display:flex;flex-direction:column;gap:12px;}
+  .bar-row{display:grid;grid-template-columns:150px 1fr 90px;align-items:center;gap:10px;font-size:12.5px;}
+  .bar-track{position:relative;height:16px;background:var(--surface-2);border-radius:5px;overflow:hidden;}
+  .bar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px 0 0 5px;}
+  .bar-fill.prevu{opacity:0.35;}
+
+  /* Gantt */
+  .gantt-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow-1);}
+  .gantt{min-width:900px;}
+  .gantt-head{display:flex;border-bottom:1px solid var(--line-strong);position:sticky;top:0;background:var(--surface);}
+  .gantt-head .cell{flex:none;font-size:11px;color:var(--ink-dim);padding:8px 4px;text-align:center;font-family:var(--font-mono);border-left:1px solid var(--line);}
+  .gantt-row{display:flex;align-items:center;border-bottom:1px solid var(--line);position:relative;height:34px;}
+  .gantt-row:nth-child(even){background:rgba(0,0,0,0.012);}
+  .gantt-label{position:sticky;left:0;background:var(--surface);width:230px;flex:none;padding:0 10px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--line-strong);z-index:2;}
+  .gantt-track{position:relative;flex:1;height:100%;}
+  .gantt-bar{position:absolute;top:8px;height:18px;border-radius:5px;font-size:10.5px;color:#fff;display:flex;align-items:center;padding:0 6px;overflow:hidden;white-space:nowrap;box-shadow:var(--shadow-1);}
+  .gantt-today{position:absolute;top:0;bottom:0;width:2px;background:var(--bad);z-index:3;}
+  .gantt-grid-line{position:absolute;top:0;bottom:0;width:1px;background:var(--line);}
+
+  /* Points bloquants */
+  .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .kcol{display:flex;flex-direction:column;gap:10px;min-width:0;}
+  .kcol h3{font-size:12.5px;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-dim);display:flex;align-items:center;gap:8px;}
+  .kcount{background:var(--surface-2);border-radius:99px;padding:1px 8px;font-family:var(--font-mono);font-size:11px;}
+  .blocker-card{padding:12px 13px;display:flex;flex-direction:column;gap:6px;}
+  .blocker-card .who{font-size:12px;color:var(--ink-dim);}
+  .blocker-card .seg{font-size:11.5px;color:var(--accent);cursor:pointer;}
+  .blocker-card .desc{font-size:13px;}
+  .blocker-card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:2px;}
+
+  .empty-state{padding:40px 20px;text-align:center;color:var(--ink-dim);}
+  .empty-state h3{color:var(--ink);margin-bottom:6px;font-size:16px;}
+
+  /* Modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(10,18,17,0.45);display:flex;align-items:flex-start;justify-content:center;padding:32px 16px;overflow:auto;z-index:100;}
+  .modal{background:var(--surface);border-radius:14px;width:100%;max-width:680px;box-shadow:var(--shadow-2);margin-bottom:40px;}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);}
+  .modal-head h3{font-size:16px;}
+  .modal-body{padding:18px 20px;display:flex;flex-direction:column;gap:16px;max-height:70vh;overflow:auto;}
+  .modal-foot{display:flex;justify-content:space-between;gap:10px;padding:14px 20px;border-top:1px solid var(--line);}
+  .field{display:flex;flex-direction:column;gap:5px;}
+  .field label{font-size:11.5px;font-weight:600;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.03em;}
+  .field input,.field select,.field textarea{
+    padding:8px 10px;border:1px solid var(--line-strong);border-radius:7px;background:var(--surface);color:var(--ink);width:100%;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
+  .field textarea{resize:vertical;min-height:56px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .subsection{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;}
+  .subsection > .sh{display:flex;align-items:center;justify-content:space-between;}
+  .subsection > .sh h4{font-size:13px;}
+  .sub-item{border:1px solid var(--line);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;position:relative;background:var(--surface-2);}
+  .sub-item .rm{position:absolute;top:8px;right:8px;}
+  .close-x{border:none;background:transparent;color:var(--ink-dim);font-size:18px;line-height:1;padding:4px;}
+  .close-x:hover{color:var(--ink);}
+  .note{font-size:12px;color:var(--ink-dim);background:var(--surface-2);border-radius:8px;padding:10px 12px;}
+  .helpline{font-size:12px;color:var(--ink-dim);}
+
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,12px);
+    background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:9px;font-size:13px;font-weight:500;
+    box-shadow:var(--shadow-2);opacity:0;transition:opacity .25s, transform .25s;z-index:200;max-width:80vw;text-align:center;
+  }
+  .toast.warn{background:var(--warn);color:#231604;}
+  .toast.show{opacity:1;transform:translate(-50%,0);}
+
+  .confirm-backdrop{position:fixed;inset:0;background:rgba(10,18,17,0.5);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;}
+  .confirm-box{background:var(--surface);border-radius:12px;padding:20px;max-width:420px;box-shadow:var(--shadow-2);}
+  .confirm-box p{margin:0 0 16px;font-size:13.5px;line-height:1.5;}
+  .confirm-actions{display:flex;justify-content:flex-end;gap:8px;}
+
+  @media (max-width: 880px){
+    .map-wrap{flex-direction:column;}
+    .map-side{width:100%;}
+    .kanban{grid-template-columns:1fr;}
+  }
+</style>
+
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">V</div>
+      <div>
+        <h1>Plan Vélo — La Baule-Escoublac</h1>
+        <div class="sub">Suivi des itinéraires cyclables · Ville de La Baule-Escoublac</div>
+      </div>
+    </div>
+    <div class="topbar-status" id="statusIndicator">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Connexion…</span>
+    </div>
+  </header>
+  <div class="shell">
+    <nav class="sidenav" id="sidenav"></nav>
+    <main id="view"></main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://dqfhyvgnhjwiglfienhw.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_sbZul5OVGsVYxKKuZmKNeg_QJE3veR4";
+</script>
+<script>
+/* ============================== CONFIG ============================== */
+
+const AMENAGEMENT_TYPES = {
+  itineraire:   { label:"Itinéraire cyclable (voirie mixte)", short:"Itinéraire", cssVar:"--c-itineraire" },
+  cvcb:         { label:"CVCB (chaussée à voie centrale banalisée)", short:"CVCB", cssVar:"--c-cvcb" },
+  double_sens:  { label:"Double-sens cyclable", short:"Double-sens", cssVar:"--c-double_sens" },
+  bande:        { label:"Bande cyclable", short:"Bande cyclable", cssVar:"--c-bande" },
+  voie_verte:   { label:"Voie verte", short:"Voie verte", cssVar:"--c-voie_verte" },
+  piste:        { label:"Piste cyclable", short:"Piste cyclable", cssVar:"--c-piste" },
+};
+
+const STATUTS = {
+  realise:  { label:"Réalisé",  dash:"", pillClass:"realise" },
+  en_cours: { label:"En cours", dash:"7 5", pillClass:"en_cours" },
+  prevu:    { label:"Prévu",    dash:"2 6", pillClass:"prevu" },
+};
+
+const ETUDE_TYPES = ["Faisabilité","Biodiversité / environnementale","AVP (avant-projet)","PRO (projet)","Concertation / réunion publique","Foncier / servitudes","Autre étude"];
+const BLOCAGE_STATUTS = { ouvert:"Ouvert", en_cours:"En cours", resolu:"Résolu" };
+
+// Tous les chiffres du tableau de bord sont calculés à partir des tronçons
+// saisis dans l'outil (state.segments) — aucune valeur fixe importée d'un
+// tableur externe : le suivi doit rester exact à ce que l'équipe renseigne.
+
+const MAP_BACKGROUNDS = {
+  itineraires: { label:"Plan par itinéraire", file:"map_itineraires.jpg" },
+  amenagements: { label:"Aménagements existants", file:"map_amenagements.jpg" },
+};
+
+const FALLBACK_ITINERARY_COLORS = ["#1a3fa0","#e0242b","#e6299c","#f07c1e","#17c4d6","#1f6b2f","#4ecf3a","#c99a1a","#1a1a1a","#7a1f2b","#e8d016","#3a7fe0"];
+// Works even for itinerary documents saved before the `couleur` field existed
+// (they were seeded once already, so the seeder never re-runs to add it).
+function itineraryColor(it){
+  if(!it) return "#8a8a8a";
+  return it.couleur || FALLBACK_ITINERARY_COLORS[((it.numero||1)-1+12)%12];
+}
+function uid(prefix){ return prefix+"_"+Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-4); }
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function fmtM(n){ if(n===null||n===undefined||n==="") return "—"; return Number(n).toLocaleString("fr-FR"); }
+function fmtKm(n){ if(!n) return "0"; return (n/1000).toLocaleString("fr-FR",{maximumFractionDigits:2}); }
+function fmtEUR(n){ if(n===null||n===undefined||n==="") return "—"; return Number(n).toLocaleString("fr-FR")+" €"; }
+function esc(s){ return (s===undefined||s===null?"":String(s)).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function monthKey(d){ return d ? d.slice(0,7) : ""; }
+function parseMonth(s){ if(!s) return null; const [y,m]=s.split("-").map(Number); return new Date(y, (m||1)-1, 1); }
+function addMonths(date,n){ return new Date(date.getFullYear(), date.getMonth()+n, 1); }
+function monthDiff(a,b){ return (b.getFullYear()-a.getFullYear())*12 + (b.getMonth()-a.getMonth()); }
+
+/* ============================== SEED DATA ============================== */
+
+// Couleurs reprises telle quelles de la légende du plan officiel "PLAN VELO
+// _CARTES" (fond de carte "Plan par itinéraire") fourni par la Ville, un
+// itinéraire = une couleur, réutilisées ici pour que la légende de l'outil
+// corresponde exactement à celle du plan papier.
+function seedItineraries(){
+  return [{"id": "it1", "description": "Front de mer — Pornichet ↔ La Jarrige (Promenade de mer)", "nom": "Itinéraire 1", "numero": 1, "couleur": "#1a3fa0"}, {"id": "it2", "description": "Le Pouliguen (Champ Savin) ↔ Mésange (Traversée Sud)", "nom": "Itinéraire 2", "numero": 2, "couleur": "#e0242b"}, {"id": "it3", "description": "", "nom": "Itinéraire 3", "numero": 3, "couleur": "#e6299c"}, {"id": "it4", "description": "", "nom": "Itinéraire 4", "numero": 4, "couleur": "#f07c1e"}, {"id": "it5", "description": "", "nom": "Itinéraire 5", "numero": 5, "couleur": "#17c4d6"}, {"id": "it6", "description": "", "nom": "Itinéraire 6", "numero": 6, "couleur": "#1f6b2f"}, {"id": "it7", "description": "", "nom": "Itinéraire 7", "numero": 7, "couleur": "#4ecf3a"}, {"id": "it8", "description": "", "nom": "Itinéraire 8", "numero": 8, "couleur": "#c99a1a"}, {"id": "it9", "description": "", "nom": "Itinéraire 9", "numero": 9, "couleur": "#1a1a1a"}, {"id": "it10", "description": "", "nom": "Itinéraire 10", "numero": 10, "couleur": "#7a1f2b"}, {"id": "it11", "description": "", "nom": "Itinéraire 11", "numero": 11, "couleur": "#e8d016"}, {"id": "it12", "description": "", "nom": "Itinéraire 12", "numero": 12, "couleur": "#3a7fe0"}, {"id": "it13", "description": "Tronçons complémentaires, hors numérotation officielle des 12 itinéraires.", "nom": "Compléments", "numero": 13, "couleur": "#8b3fd1"}];
+}
+
+// Tronçons importés tels que nommés dans le fichier planning existant
+// ("planning plan de déploiement vélo 2.xlsx"). Statut, dates, aménagement et
+// budgets n'y figuraient pas de façon exploitable automatiquement : ils sont
+// donc laissés à vérifier/compléter plutôt que devinés.
+function seedSegments(){
+  return [{"amenagementType": "piste", "budgetPrevu": null, "budgetRealise": 500000, "coords": [{"x": 52.47, "y": 78.49}, {"x": 46.26, "y": 72.65}], "etudes": [], "id": "seg1", "itineraryId": "it1", "longueurM": 1500, "mapBg": "itineraires", "notes": "Importé du planning existant — statut, dates, aménagement et budget à vérifier/compléter.", "ordre": 1, "pointA": "Pornichet", "pointB": "Léo Delibes", "pointsBlocage": [], "statut": "realise", "travaux": []}, {"amenagementType": "piste", "budgetPrevu": 350000, "budgetRealise": null, "coords": [{"x": 45.91, "y": 72.3}, {"x": 42.31, "y": 69.84}], "etudes": [], "id": "seg2", "itineraryId": "it1", "longueurM": 750, "mapBg": "itineraires", "notes": "Tronçon \"Promenade de mer\" — importé du planning existant, à compléter.", "ordre": 2, "pointA": "Léo Delibes", "pointB": "La Jarrige", "pointsBlocage": [], "statut": "prevu", "travaux": [{"debut": "2026-09", "fin": "2027-07", "phase": "Travaux infrastructure", "statut": "en_cours"}, {"debut": "2027-09", "fin": "2028-04", "phase": "Travaux requalification", "statut": "prevue"}]}, {"amenagementType": "cvcb", "budgetPrevu": 25000, "budgetRealise": null, "coords": [{"x": 2.32, "y": 65.49}, {"x": 5.02, "y": 64.71}], "etudes": [{"debut": "2026-10", "fin": "2027-02", "statut": "prevue", "type": "Faisabilité"}, {"debut": "2027-06", "fin": "2027-07", "statut": "prevue", "type": "PRO (projet)"}], "id": "seg_12692qzf8lk", "itineraryId": "it2", "longueurM": 70, "mapBg": "itineraires", "notes": "", "ordre": 1, "pointA": "2.1", "pointB": "2.2", "pointsBlocage": [], "statut": "prevu", "travaux": []}, {"amenagementType": "bande", "budgetPrevu": null, "budgetRealise": null, "coords": [{"x": 31.05, "y": 34.89}, {"x": 31.68, "y": 33.69}, {"x": 32.53, "y": 32.39}, {"x": 31.15, "y": 30.72}, {"x": 29.71, "y": 29.33}, {"x": 31.81, "y": 25.2}, {"x": 31.38, "y": 24.78}], "etudes": [], "id": "seg_2qmzu0jl5g5", "itineraryId": "it3", "longueurM": 450, "mapBg": "itineraires", "notes": "", "ordre": 3, "pointA": "3.3", "pointB": "3.4", "pointsBlocage": [], "statut": "prevu", "travaux": []}, {"amenagementType": "itineraire", "budgetPrevu": null, "budgetRealise": null, "coords": [], "etudes": [], "id": "seg_2rwsxqfd8xd", "itineraryId": "it10", "longueurM": null, "mapBg": "itineraires", "notes": "", "ordre": 1, "pointA": "10.1", "pointB": "10.2", "pointsBlocage": [], "statut": "prevu", "travaux": []}, {"amenagementType": "voie_verte", "budgetPrevu": null, "budgetRealise": null, "coords": [{"x": 29.11, "y": 40.22}, {"x": 30.8, "y": 35.63}, {"x": 29.89, "y": 36.22}, {"x": 28.52, "y": 40.12}], "etudes": [{"debut": "2026-10", "fin": "2026-12", "statut": "prevue", "type": "Faisabilité"}], "id": "seg_cyc59anidpe", "itineraryId": "it3", "longueurM": 450, "mapBg": "itineraires", "notes": "", "ordre": 2, "pointA": "3.2", "pointB": "3.3", "pointsBlocage": [], "statut": "prevu", "travaux": []}, {"amenagementType": "voie_verte", "budgetPrevu": null, "budgetRealise": null, "coords": [{"x": 31.4, "y": 25.19}, {"x": 31, "y": 24.65}, {"x": 30.72, "y": 22.72}, {"x": 27.57, "y": 20.19}, {"x": 24.27, "y": 17.23}, {"x": 23.94, "y": 17.43}], "etudes": [], "id": "seg_g1vyk2bo60i", "itineraryId": "it3", "longueurM": 450, "mapBg": "itineraires", "notes": "", "ordre": 4, "pointA": "3.4", "pointB": "3.5", "pointsBlocage": [], "statut": "realise", "travaux": []}, {"amenagementType": "voie_verte", "budgetPrevu": null, "budgetRealise": null, "coords": [{"x": 3.11, "y": 61.19}, {"x": 3.49, "y": 61.91}, {"x": 3.68, "y": 60.11}, {"x": 4.41, "y": 59.52}, {"x": 6.29, "y": 59.25}, {"x": 9.73, "y": 57.85}, {"x": 11.93, "y": 57.58}, {"x": 12.98, "y": 57.13}, {"x": 13.14, "y": 58.08}, {"x": 13.59, "y": 57.22}, {"x": 13.37, "y": 56.82}, {"x": 13.62, "y": 56.5}, {"x": 13.27, "y": 52.9}, {"x": 13.33, "y": 52.31}, {"x": 15.47, "y": 53.66}, {"x": 16.3, "y": 53.8}, {"x": 17.19, "y": 53.03}, {"x": 17.98, "y": 51.22}, {"x": 18.96, "y": 49.26}, {"x": 23.32, "y": 45.43}, {"x": 24.15, "y": 43.83}, {"x": 24.27, "y": 43.02}, {"x": 23.68, "y": 42.38}, {"x": 25.62, "y": 40.63}, {"x": 26.22, "y": 40.77}, {"x": 26.23, "y": 41.44}, {"x": 26.69, "y": 41.9}, {"x": 26.81, "y": 41.25}, {"x": 27.16, "y": 40.87}, {"x": 27.78, "y": 40.68}, {"x": 29.01, "y": 40.46}], "etudes": [], "id": "seg_ghb5ckvkt60", "itineraryId": "it3", "longueurM": 2450, "mapBg": "itineraires", "notes": "", "ordre": 1, "pointA": "3.1", "pointB": "3.2", "pointsBlocage": [], "statut": "realise", "travaux": []}, {"amenagementType": "piste", "budgetPrevu": 95000, "budgetRealise": null, "coords": [{"x": 2.04, "y": 65.76}, {"x": 3.07, "y": 66.15}, {"x": 4.24, "y": 67.01}, {"x": 5.51, "y": 67.33}, {"x": 7.24, "y": 67.25}, {"x": 8.49, "y": 66.38}, {"x": 10.85, "y": 64.42}, {"x": 12.63, "y": 63.95}, {"x": 15.19, "y": 62.96}], "etudes": [], "id": "seg_vk0kkdudyjv", "itineraryId": "it9", "longueurM": 750, "mapBg": "itineraires", "notes": "", "ordre": 1, "pointA": "9.1 Pont Pouliguen", "pointB": "9.2 Avenue des Lilas", "pointsBlocage": [{"action": "Arbitrage dans le cadre du plan de Mobilité", "description": "Décision politique. Contestation Riverains", "echeance": "2027-03", "id": "blk_ye6vx1yfk5g", "pilote": "Lanthiez", "statut": "en_cours"}], "statut": "prevu", "travaux": []}, {"amenagementType": "itineraire", "budgetPrevu": 25000, "budgetRealise": null, "coords": [{"x": 5.08, "y": 64.73}, {"x": 5.45, "y": 67.08}], "etudes": [], "id": "seg_zt2488dg8xm", "itineraryId": "it9", "longueurM": 150, "mapBg": "itineraires", "notes": "", "ordre": 2, "pointA": "9.3", "pointB": "9.4", "pointsBlocage": [], "statut": "realise", "travaux": []}];
+}
+
+/* ============================== STATE ============================== */
+
+// When true, this build is a consultation-only export (e.g. published for
+// someone outside the organization, who can't be given write access to the
+// live shared database): every persistence entry point becomes a no-op and
+// the editing controls are hidden. A normal live build always keeps this
+// false — a separate export step flips it to true in its own copy of this
+// file, after baking in a snapshot of the real data.
+const READONLY_EXPORT = false;
+
+const state = {
+  itineraries: [],
+  segments: [],
+  dbMode: "connecting", // connecting | live | local
+  tab: "carte",
+  map: {
+    bg: "itineraires",
+    drawingSegmentId: null,
+    draftPoints: [],
+    selectedSegmentId: null,
+    zoom: 1, tx: 0, ty: 0,
+    dimmed: true,
+  },
+  blockersFilter: "all",
+  editingId: null, // segment currently open in modal (avoid clobbering on live re-render)
+};
+
+let supabase = null;
+
+async function initDb(){
+  try{
+    if(!window.supabase || !window.supabase.createClient) throw new Error("supabase-js not loaded");
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const [itRes, segRes] = await Promise.all([
+      supabase.from("itineraries").select("id,data"),
+      supabase.from("segments").select("id,data"),
+    ]);
+    if(itRes.error || segRes.error) throw (itRes.error || segRes.error);
+
+    if(itRes.data.length === 0){
+      const seeds = seedItineraries();
+      state.itineraries = seeds;
+      await supabase.from("itineraries").upsert(seeds.map(it=>({id:it.id, data:it})));
+    } else {
+      state.itineraries = itRes.data.map(r=>r.data);
+      // Backfill: a database populated before a given seed itinerary existed
+      // (e.g. "Compléments", added later) won't have it — add any missing
+      // seed itinerary. Harmless once present since it's then a no-op.
+      const presentIds = new Set(state.itineraries.map(it=>it.id));
+      const missing = seedItineraries().filter(it=>!presentIds.has(it.id));
+      if(missing.length){
+        state.itineraries.push(...missing);
+        await supabase.from("itineraries").upsert(missing.map(it=>({id:it.id, data:it})));
+      }
+    }
+
+    if(segRes.data.length === 0){
+      const seeds = seedSegments();
+      state.segments = seeds;
+      await supabase.from("segments").upsert(seeds.map(s=>({id:s.id, data:s})));
+    } else {
+      state.segments = segRes.data.map(r=>r.data);
+    }
+
+    state.dbMode = "live";
+    setStatus();
+    renderAll();
+
+    // Realtime: any other visitor's change (insert/update/delete) is pushed
+    // to every connected browser, so everyone always sees the same data —
+    // no page refresh needed.
+    supabase.channel("public:itineraries")
+      .on("postgres_changes", {event:"*", schema:"public", table:"itineraries"}, payload=>applyRealtimeChange("itineraries", payload))
+      .subscribe();
+    supabase.channel("public:segments")
+      .on("postgres_changes", {event:"*", schema:"public", table:"segments"}, payload=>applyRealtimeChange("segments", payload))
+      .subscribe();
+  }catch(e){
+    console.error("Supabase init failed, falling back to local mode:", e);
+    supabase = null;
+    state.dbMode = "local";
+    if(!state.itineraries.length) state.itineraries = seedItineraries();
+    if(!state.segments.length) state.segments = seedSegments();
+    setStatus();
+    renderAll();
+  }
+}
+
+function applyRealtimeChange(kind, payload){
+  const arr = kind==="segments" ? state.segments : state.itineraries;
+  if(payload.eventType === "DELETE"){
+    const id = payload.old.id;
+    const idx = arr.findIndex(x=>x.id===id);
+    if(idx>=0) arr.splice(idx,1);
+  } else {
+    const incoming = payload.new.data;
+    const idx = arr.findIndex(x=>x.id===incoming.id);
+    if(idx>=0) arr[idx] = incoming; else arr.push(incoming);
+  }
+  renderAll();
+}
+
+async function saveSegment(segIn){
+  const seg = {...segIn};
+  const idx = state.segments.findIndex(s=>s.id===seg.id);
+  if(idx>=0) state.segments[idx]=seg; else state.segments.push(seg);
+  renderAll();
+  if(supabase){
+    try{ await supabase.from("segments").upsert({id:seg.id, data:seg}); }
+    catch(e){ /* keep the local optimistic copy visible even if the write failed */ }
+  }
+}
+async function deleteSegment(id){
+  state.segments = state.segments.filter(s=>s.id!==id);
+  renderAll();
+  if(supabase){ try{ await supabase.from("segments").delete().eq("id", id); }catch(e){} }
+}
+async function saveItinerary(itIn){
+  const it = {...itIn};
+  const idx = state.itineraries.findIndex(s=>s.id===it.id);
+  if(idx>=0) state.itineraries[idx]=it; else state.itineraries.push(it);
+  renderAll();
+  if(supabase){ try{ await supabase.from("itineraries").upsert({id:it.id, data:it}); }catch(e){} }
+}
+
+function setStatus(){
+  const dot = document.getElementById("statusDot");
+  const txt = document.getElementById("statusText");
+  if(!dot) return;
+  if(READONLY_EXPORT){ dot.className="dot local"; txt.textContent="Version de consultation — lecture seule, données figées au "+(READONLY_EXPORT_DATE||"—"); return; }
+  if(state.dbMode==="live"){ dot.className="dot live"; txt.textContent="Données partagées et sauvegardées"; }
+  else if(state.dbMode==="local"){ dot.className="dot local"; txt.textContent="Mode local (non sauvegardé) — rouvrez depuis Claude pour la sauvegarde partagée"; }
+  else { dot.className="dot"; txt.textContent="Connexion…"; }
+}
+
+/* ============================== NAV / RENDER ROOT ============================== */
+
+const TABS = [
+  {id:"carte", label:"Carte", n:"01"},
+  {id:"dashboard", label:"Tableau de bord", n:"02"},
+  {id:"itineraires", label:"Itinéraires & tronçons", n:"03"},
+  {id:"planning", label:"Planning", n:"04"},
+  {id:"blocages", label:"Points bloquants", n:"05"},
+];
+
+function renderNav(){
+  const nav = document.getElementById("sidenav");
+  nav.innerHTML = TABS.map(t=>`
+    <button class="navbtn ${state.tab===t.id?'active':''}" data-tab="${t.id}">
+      <span class="n">${t.n}</span><span>${esc(t.label)}</span>
+    </button>
+  `).join("") + `<div class="nav-foot">Ville de La Baule-Escoublac<br>Direction de la Voirie</div>`;
+  nav.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{
+    state.tab = b.dataset.tab;
+    renderAll();
+  }));
+}
+
+function renderAll(){
+  renderNav();
+  setStatus();
+  const view = document.getElementById("view");
+  if(state.tab==="carte") view.innerHTML = viewCarte();
+  else if(state.tab==="dashboard") view.innerHTML = viewDashboard();
+  else if(state.tab==="itineraires") view.innerHTML = viewItineraires();
+  else if(state.tab==="planning") view.innerHTML = viewPlanning();
+  else if(state.tab==="blocages") view.innerHTML = viewBlocages();
+  afterRender();
+}
+
+/* ============================== HELPERS: derived data ============================== */
+
+function segmentsByItinerary(itId){ return state.segments.filter(s=>s.itineraryId===itId).sort((a,b)=>a.ordre-b.ordre); }
+function itineraryOf(seg){ return state.itineraries.find(i=>i.id===seg.itineraryId); }
+function allBlockers(){
+  const out=[];
+  state.segments.forEach(seg=>{
+    (seg.pointsBlocage||[]).forEach(b=>out.push({...b, segmentId:seg.id}));
+  });
+  return out;
+}
+function totalsByType(){
+  const totals={}; Object.keys(AMENAGEMENT_TYPES).forEach(k=>totals[k]={realise:0,en_cours:0,prevu:0});
+  state.segments.forEach(s=>{
+    const t = totals[s.amenagementType] || (totals[s.amenagementType]={realise:0,en_cours:0,prevu:0});
+    t[s.statut] += Number(s.longueurM)||0;
+  });
+  return totals;
+}
+
+/* ============================== VIEW: CARTE ============================== */
+
+function viewCarte(){
+  const bg = MAP_BACKGROUNDS[state.map.bg];
+  const unplaced = state.segments.filter(s=>!s.coords || s.coords.length<2);
+  const selected = state.segments.find(s=>s.id===state.map.selectedSegmentId);
+  const drawingSeg = state.segments.find(s=>s.id===state.map.drawingSegmentId);
+
+  return `
+    <div class="view-head">
+      <div>
+        <h2>Carte du plan vélo</h2>
+        <p>Les tracés sont vivants : la couleur suit le type d'aménagement et le trait devient plein dès qu'un tronçon passe en « Réalisé ». Molette pour zoomer, cliquer-glisser pour déplacer la vue.</p>
+      </div>
+    </div>
+    <div class="map-toolbar">
+      <div class="seg-toggle">
+        ${Object.entries(MAP_BACKGROUNDS).map(([k,v])=>`<button data-bg="${k}" class="${state.map.bg===k?'active':''}">${esc(v.label)}</button>`).join("")}
+      </div>
+      ${READONLY_EXPORT ? "" : `
+      <select id="drawSegmentSelect" class="btn small" style="padding:6px 10px;">
+        <option value="">Tracer / repositionner un tronçon…</option>
+        ${state.segments.slice().sort((a,b)=>segLabel(a).localeCompare(segLabel(b),'fr')).map(s=>`<option value="${s.id}" ${state.map.drawingSegmentId===s.id?'selected':''}>${esc(segLabel(s))}${s.coords&&s.coords.length>=2?' ✓':''}</option>`).join("")}
+      </select>`}
+      <label class="bg-toggle-row"><input type="checkbox" id="toggleDim" ${state.map.dimmed?'checked':''}> Fond quasi vierge (recommandé pour tracer) — décocher pour voir le plan officiel en couleur</label>
+    </div>
+    ${state.map.drawingSegmentId ? `
+      <div class="draw-banner">
+        <span id="drawBannerText">✏️ Tracé en cours pour <strong>${esc(segLabel(drawingSeg))}</strong> — chaque clic sur le plan ajoute un point (${state.map.draftPoints.length} point${state.map.draftPoints.length>1?'s':''}). Molette pour zoomer, pavé ✥ en bas à gauche pour déplacer la vue.</span>
+        <span style="display:flex;gap:6px;">
+          <button class="btn small" id="undoPoint">Annuler dernier point</button>
+          <button class="btn small primary" id="finishDraw">Enregistrer le tracé</button>
+          <button class="btn small ghost" id="cancelDraw">Annuler</button>
+        </span>
+      </div>` : ""}
+    <div class="map-wrap">
+      <div class="map-viewport" id="mapViewport">
+        <div class="map-stage ${state.map.drawingSegmentId?'drawing':''}" id="mapStage" style="transform:translate(${state.map.tx}px,${state.map.ty}px) scale(${state.map.zoom});">
+          <img src="${bg.file}" id="mapImg" draggable="false" alt="${esc(bg.label)}" class="${state.map.dimmed?'dimmed':''}">
+          <svg id="mapSvg" viewBox="0 0 100 100" preserveAspectRatio="none" style="pointer-events:${state.map.drawingSegmentId?'none':'auto'};"></svg>
+        </div>
+        <div class="zoom-controls">
+          <button id="zoomIn" title="Zoomer">+</button>
+          <button id="zoomOut" title="Dézoomer">−</button>
+          <button id="zoomReset" title="Réinitialiser la vue">⤾</button>
+        </div>
+        ${state.map.drawingSegmentId ? `
+        <div class="nudge-pad" title="Déplacer la vue (le clic sert à poser un point pendant le tracé)">
+          <span></span><button id="nudgeUp">▲</button><span></span>
+          <button id="nudgeLeft">◀</button><span class="nudge-center">✥</span><button id="nudgeRight">▶</button>
+          <span></span><button id="nudgeDown">▼</button><span></span>
+        </div>` : ""}
+      </div>
+      <div class="map-side">
+        <div class="card pad">
+          ${state.map.bg==="itineraires" ? `
+          <h4 style="font-size:13px;margin-bottom:10px;">Légende — itinéraire</h4>
+          <div class="legend-list" style="max-height:220px;overflow-y:auto;">
+            ${state.itineraries.slice().sort((a,b)=>a.numero-b.numero).map(it=>`
+              <div class="row"><span class="legend-line" style="border-color:${itineraryColor(it)}"></span>${esc(it.nom)}</div>
+            `).join("")}
+          </div>` : `
+          <h4 style="font-size:13px;margin-bottom:10px;">Légende — type d'aménagement</h4>
+          <div class="legend-list">
+            ${Object.entries(AMENAGEMENT_TYPES).map(([k,v])=>`
+              <div class="row"><span class="legend-line" style="border-color:${css(v.cssVar)}"></span>${esc(v.short)}</div>
+            `).join("")}
+          </div>`}
+          <div style="height:1px;background:var(--line);margin:12px 0;"></div>
+          <h4 style="font-size:13px;margin-bottom:10px;">Statut du tracé</h4>
+          <div class="legend-list">
+            <div class="row"><span class="legend-line" style="border-color:var(--ink-dim);border-top-width:3px;"></span>Réalisé (trait plein)</div>
+            <div class="row"><span class="legend-line" style="border-color:var(--ink-dim);border-top-style:dashed;"></span>En cours / prévu (pointillés)</div>
+          </div>
+        </div>
+        ${selected ? `
+          <div class="card seg-info">
+            <h4>${esc(segLabel(selected))}</h4>
+            <div class="meta">${esc(itineraryOf(selected)?.nom||"")} · <span class="pill ${STATUTS[selected.statut].pillClass}">${STATUTS[selected.statut].label}</span></div>
+            <div style="font-size:12.5px;color:var(--ink-dim);margin-bottom:8px;">${esc(AMENAGEMENT_TYPES[selected.amenagementType].label)}${selected.longueurM?` · ${fmtM(selected.longueurM)} m`:""}</div>
+            <button class="btn small primary" data-open-segment="${selected.id}">Éditer ce tronçon</button>
+          </div>` : ""}
+        <div class="card pad unplaced">
+          <strong style="color:var(--ink);">${unplaced.length} tronçon${unplaced.length>1?'s':''} non positionné${unplaced.length>1?'s':''}</strong>
+          ${unplaced.length ? `<ul>${unplaced.slice(0,8).map(s=>`<li>${esc(segLabel(s))}</li>`).join("")}${unplaced.length>8?`<li>… et ${unplaced.length-8} autres</li>`:""}</ul>` : `<p style="margin:4px 0 0;">Tous les tronçons saisis sont positionnés sur la carte.</p>`}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function segLabel(s){
+  if(!s) return "";
+  return `${s.pointA||"?"} → ${s.pointB||"?"}`;
+}
+
+function drawMap(){
+  const svg = document.getElementById("mapSvg");
+  if(!svg) return;
+  // Tracés affichés quel que soit le fond actif : les deux plans couvrent la
+  // même emprise communale, et un tronçon tracé doit rester visible qu'on
+  // bascule d'un fond à l'autre — sinon il paraît "disparaître".
+  const segs = state.segments.filter(s=>s.coords && s.coords.length>=2 && s.id!==state.map.drawingSegmentId);
+  // Couleur du tracé : sur le fond "Plan par itinéraire" on reprend la
+  // couleur propre à chaque itinéraire (comme sur le plan officiel) ; sur le
+  // fond "Aménagements existants" on colore par type d'aménagement.
+  const colorFor = s => state.map.bg==="itineraires" ? itineraryColor(itineraryOf(s)) : css(AMENAGEMENT_TYPES[s.amenagementType].cssVar);
+  let html = "";
+  segs.forEach(s=>{
+    const color = colorFor(s);
+    const dash = STATUTS[s.statut].dash || "none";
+    const pts = s.coords.map(p=>`${p.x},${p.y}`).join(" ");
+    const isSel = s.id===state.map.selectedSegmentId;
+    html += `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="${isSel?3:2}" stroke-dasharray="${dash}" stroke-linecap="round" stroke-linejoin="round" data-seg="${s.id}" style="cursor:pointer;${isSel?`filter:drop-shadow(0 0 1.5px ${color});`:""}" vector-effect="non-scaling-stroke" pointer-events="stroke"/>`;
+  });
+  if(state.map.drawingSegmentId && state.map.draftPoints.length){
+    const dseg = state.segments.find(s=>s.id===state.map.drawingSegmentId);
+    const color = dseg ? colorFor(dseg) : css('--accent');
+    const pts = state.map.draftPoints.map(p=>`${p.x},${p.y}`).join(" ");
+    if(state.map.draftPoints.length>=2) html += `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2.4" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>`;
+    state.map.draftPoints.forEach((p,i)=>{ html += `<circle cx="${p.x}" cy="${p.y}" r="0.35" fill="${color}" stroke="#fff" stroke-width="0.12"/>`; });
+  }
+  svg.innerHTML = html;
+  svg.querySelectorAll("[data-seg]").forEach(el=>{
+    el.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      state.map.selectedSegmentId = el.dataset.seg;
+      renderAll();
+    });
+  });
+}
+
+/* ============================== VIEW: DASHBOARD ============================== */
+
+function viewDashboard(){
+  const totals = totalsByType();
+  let totalSuivi=0, totalRealise=0, totalPrevu=0, totalEnCours=0;
+  Object.values(totals).forEach(t=>{ totalSuivi+=t.realise+t.en_cours+t.prevu; totalRealise+=t.realise; totalEnCours+=t.en_cours; totalPrevu+=t.prevu; });
+  const budgetPrevu = state.segments.reduce((a,s)=>a+(Number(s.budgetPrevu)||0),0);
+  const budgetRealise = state.segments.reduce((a,s)=>a+(Number(s.budgetRealise)||0),0);
+  const blockersOpen = allBlockers().filter(b=>b.statut!=="resolu").length;
+  const maxTotal = Math.max(1, ...Object.values(totals).map(t=>t.realise+t.en_cours+t.prevu));
+  const nbSegments = state.segments.length;
+
+  return `
+    <div class="view-head">
+      <div>
+        <h2>Tableau de bord</h2>
+        <p>Tous les chiffres ci-dessous sont calculés en direct à partir des tronçons saisis dans l'onglet Itinéraires — aucune valeur fixe importée d'un tableur.</p>
+      </div>
+    </div>
+    <div class="kpis">
+      <div class="card kpi"><div class="lbl">Linéaire saisi dans l'outil</div><div class="val">${fmtKm(totalSuivi)}<small>km</small></div><div class="cmp">sur ${nbSegments} tronçon${nbSegments>1?'s':''} renseigné${nbSegments>1?'s':''}</div></div>
+      <div class="card kpi"><div class="lbl">Dont réalisé</div><div class="val">${fmtKm(totalRealise)}<small>km</small></div><div class="cmp">${totalSuivi?Math.round(totalRealise/totalSuivi*100):0}% du linéaire saisi</div></div>
+      <div class="card kpi"><div class="lbl">Budget prévisionnel saisi</div><div class="val">${fmtEUR(budgetPrevu)}</div><div class="cmp">${fmtEUR(budgetRealise)} réalisé</div></div>
+      <div class="card kpi"><div class="lbl">Points bloquants ouverts</div><div class="val">${blockersOpen}</div><div class="cmp">sur ${allBlockers().length} au total</div></div>
+    </div>
+
+    <div class="card pad" style="margin-bottom:18px;">
+      <h4 style="font-size:14px;margin-bottom:14px;">Linéaire par type d'aménagement — réalisé / en cours / prévu</h4>
+      <div class="bars">
+        ${Object.entries(AMENAGEMENT_TYPES).map(([k,v])=>{
+          const t = totals[k];
+          const total = t.realise+t.en_cours+t.prevu;
+          const pR = total?t.realise/maxTotal*100:0, pC = total?t.en_cours/maxTotal*100:0, pP = total?t.prevu/maxTotal*100:0;
+          return `<div class="bar-row">
+            <div style="display:flex;align-items:center;gap:7px;"><span class="swatch" style="background:${css(v.cssVar)}"></span>${esc(v.short)}</div>
+            <div class="bar-track" title="Réalisé ${fmtM(t.realise)} m · En cours ${fmtM(t.en_cours)} m · Prévu ${fmtM(t.prevu)} m">
+              <div class="bar-fill" style="width:${pR}%;background:${css(v.cssVar)};"></div>
+              <div class="bar-fill" style="left:${pR}%;width:${pC}%;background:${css(v.cssVar)};opacity:0.65;"></div>
+              <div class="bar-fill prevu" style="left:${pR+pC}%;width:${pP}%;background:${css(v.cssVar)};"></div>
+            </div>
+            <div class="num" style="text-align:right;">${fmtM(total)} m</div>
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="helpline" style="margin-top:10px;">Teinte pleine = réalisé · teinte moyenne = en cours · teinte pâle = prévu. Survolez une barre pour le détail.</div>
+    </div>
+
+    <div class="grid2" style="align-items:start;">
+      <div class="card pad">
+        <h4 style="font-size:14px;margin-bottom:10px;">Avancement par statut</h4>
+        <table class="tbl">
+          <tr><td><span class="pill realise">Réalisé</span></td><td class="num" style="text-align:right;">${fmtM(totalRealise)} m</td></tr>
+          <tr><td><span class="pill en_cours">En cours</span></td><td class="num" style="text-align:right;">${fmtM(totalEnCours)} m</td></tr>
+          <tr><td><span class="pill prevu">Prévu</span></td><td class="num" style="text-align:right;">${fmtM(totalPrevu)} m</td></tr>
+        </table>
+      </div>
+      <div class="card pad">
+        <h4 style="font-size:14px;margin-bottom:10px;">Couverture par itinéraire</h4>
+        <table class="tbl">
+          ${state.itineraries.sort((a,b)=>a.numero-b.numero).map(it=>{
+            const segs = segmentsByItinerary(it.id);
+            return `<tr><td>${esc(it.nom)}</td><td class="num" style="text-align:right;color:var(--ink-dim);">${segs.length} tronçon${segs.length>1?'s':''}</td></tr>`;
+          }).join("")}
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================== VIEW: ITINERAIRES ============================== */
+
+function viewItineraires(){
+  const sorted = [...state.itineraries].sort((a,b)=>a.numero-b.numero);
+  return `
+    <div class="view-head">
+      <div>
+        <h2>Itinéraires &amp; tronçons</h2>
+        <p>Chaque itinéraire est découpé en tronçons par jalons. Un tronçon porte son propre aménagement, calendrier, budget et points bloquants.</p>
+      </div>
+    </div>
+    ${sorted.map(it=>{
+      const segs = segmentsByItinerary(it.id);
+      return `
+      <div class="card" style="margin-bottom:16px;">
+        <div class="pad" style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:1px solid var(--line);">
+          <div>
+            <h3 style="font-size:15px;">${esc(it.nom)}</h3>
+            <div style="font-size:12.5px;color:var(--ink-dim);margin-top:2px;" contenteditable="false">${esc(it.description)||'<span style="opacity:.6">Pas de description — cliquez « Renommer » pour en ajouter une.</span>'}</div>
+          </div>
+          ${READONLY_EXPORT ? "" : `
+          <div style="display:flex;gap:8px;flex:none;">
+            <button class="btn small" data-rename-it="${it.id}">Renommer</button>
+            <button class="btn small primary" data-add-segment="${it.id}">+ Tronçon</button>
+          </div>`}
+        </div>
+        ${segs.length ? `
+        <table class="tbl">
+          <thead><tr><th>Tronçon</th><th>Aménagement</th><th>Statut</th><th>Longueur</th><th>Budget prévu / réalisé</th><th>Blocages</th><th></th></tr></thead>
+          <tbody>
+          ${segs.map(s=>`
+            <tr class="clickable" data-open-segment="${s.id}">
+              <td>${esc(segLabel(s))}</td>
+              <td><span class="swatch" style="background:${css(AMENAGEMENT_TYPES[s.amenagementType].cssVar)};margin-right:6px;"></span>${esc(AMENAGEMENT_TYPES[s.amenagementType].short)}</td>
+              <td><span class="pill ${STATUTS[s.statut].pillClass}">${STATUTS[s.statut].label}</span></td>
+              <td class="num">${s.longueurM?fmtM(s.longueurM)+" m":"—"}</td>
+              <td class="num">${fmtEUR(s.budgetPrevu)} / ${fmtEUR(s.budgetRealise)}</td>
+              <td>${(s.pointsBlocage||[]).length ? `<span class="pill ouvert">${(s.pointsBlocage||[]).filter(b=>b.statut!=='resolu').length} ouvert(s)</span>` : "—"}</td>
+              <td style="text-align:right;"><button class="btn small ghost" data-open-segment="${s.id}">${READONLY_EXPORT?"Voir":"Éditer"} →</button></td>
+            </tr>
+          `).join("")}
+          </tbody>
+        </table>` : `<div class="empty-state"><p style="margin:0;">Aucun tronçon saisi pour cet itinéraire.</p></div>`}
+      </div>`;
+    }).join("")}
+  `;
+}
+
+/* ============================== VIEW: PLANNING (GANTT) ============================== */
+
+function collectPlanningItems(){
+  const items=[];
+  state.segments.forEach(seg=>{
+    const it = itineraryOf(seg);
+    (seg.etudes||[]).forEach(e=>{
+      if(e.debut) items.push({kind:"etude", label:e.type||"Étude", itName:it?.nom, segLabel:segLabel(seg), segId:seg.id, debut:e.debut, fin:e.fin||e.debut, statut:e.statut, color:css('--accent')});
+    });
+    (seg.travaux||[]).forEach(t=>{
+      if(t.debut) items.push({kind:"travaux", label:t.phase||"Travaux", itName:it?.nom, segLabel:segLabel(seg), segId:seg.id, debut:t.debut, fin:t.fin||t.debut, statut:t.statut, color:css(AMENAGEMENT_TYPES[seg.amenagementType].cssVar)});
+    });
+  });
+  return items;
+}
+
+function viewPlanning(){
+  const items = collectPlanningItems();
+  if(!items.length){
+    return `
+      <div class="view-head"><div><h2>Planning général</h2><p>Généré à partir des dates d'études et de travaux saisies sur chaque tronçon.</p></div></div>
+      <div class="card empty-state">
+        <h3>Aucune date renseignée pour l'instant</h3>
+        <p>Ouvrez un tronçon depuis l'onglet « Itinéraires &amp; tronçons » et ajoutez une étude ou une phase de travaux avec des dates pour voir apparaître le planning ici.</p>
+      </div>`;
+  }
+  let minD = parseMonth(items.reduce((a,i)=>i.debut<a?i.debut:a, items[0].debut));
+  let maxD = parseMonth(items.reduce((a,i)=>i.fin>a?i.fin:a, items[0].fin));
+  minD = addMonths(minD,-1); maxD = addMonths(maxD,2);
+  const totalMonths = Math.max(1, monthDiff(minD,maxD));
+  const today = new Date();
+  const todayPct = Math.min(100, Math.max(0, monthDiff(minD,today)/totalMonths*100));
+
+  // group by itinerary > segment
+  const groups = {};
+  items.forEach(i=>{
+    const key = i.itName+"|||"+i.segLabel;
+    (groups[key] = groups[key]||[]).push(i);
+  });
+
+  // year/month header ticks (yearly for readability)
+  const ticks=[];
+  let cursor = new Date(minD.getFullYear(), 0, 1);
+  if(cursor<minD) cursor = new Date(minD.getFullYear(), 0, 1);
+  for(let y=minD.getFullYear(); y<=maxD.getFullYear(); y++){
+    const pos = Math.min(100, Math.max(0, monthDiff(minD, new Date(y,0,1))/totalMonths*100));
+    ticks.push({label:y, pos});
+  }
+
+  return `
+    <div class="view-head"><div><h2>Planning général</h2><p>Études (bleu) et phases de travaux (couleur du type d'aménagement) par tronçon.</p></div></div>
+    <div class="gantt-wrap">
+      <div class="gantt">
+        <div class="gantt-row" style="border-bottom:1px solid var(--line-strong);">
+          <div class="gantt-label" style="font-weight:600;font-size:11px;text-transform:uppercase;color:var(--ink-dim);">Itinéraire · tronçon</div>
+          <div class="gantt-track">
+            ${ticks.map(t=>`<div class="gantt-grid-line" style="left:${t.pos}%;"></div><div style="position:absolute;left:${t.pos}%;top:8px;font-family:var(--font-mono);font-size:11px;color:var(--ink-dim);transform:translateX(4px);">${t.label}</div>`).join("")}
+            <div class="gantt-today" style="left:${todayPct}%;" title="Aujourd'hui"></div>
+          </div>
+        </div>
+        ${Object.entries(groups).map(([key, its])=>{
+          const [itName, sLabel] = key.split("|||");
+          return `<div class="gantt-row">
+            <div class="gantt-label">${esc(itName)} · ${esc(sLabel)}</div>
+            <div class="gantt-track">
+              ${ticks.map(t=>`<div class="gantt-grid-line" style="left:${t.pos}%;"></div>`).join("")}
+              ${its.map(i=>{
+                const d0 = parseMonth(i.debut), d1 = parseMonth(i.fin);
+                const left = monthDiff(minD,d0)/totalMonths*100;
+                const width = Math.max(1.2, monthDiff(d0,d1)/totalMonths*100);
+                const bg = i.kind==="etude" ? css('--accent') : i.color;
+                return `<div class="gantt-bar" style="left:${left}%;width:${width}%;background:${bg};opacity:${i.statut==='terminee'||i.statut==='terminee'?'0.55':'1'};" title="${esc(i.label)} (${esc(i.debut)} → ${esc(i.fin)})">${esc(i.label)}</div>`;
+              }).join("")}
+            </div>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>
+  `;
+}
+
+/* ============================== VIEW: BLOCAGES ============================== */
+
+function viewBlocages(){
+  const all = allBlockers();
+  const filtered = state.blockersFilter==="all" ? all : all.filter(b=>b.statut===state.blockersFilter);
+  const cols = ["ouvert","en_cours","resolu"];
+  if(!all.length){
+    return `
+      <div class="view-head"><div><h2>Points bloquants</h2><p>Sujets à arbitrer, personnes pilotes et actions à mener, par tronçon.</p></div></div>
+      <div class="card empty-state"><h3>Aucun point bloquant enregistré</h3><p>Ajoutez-en un depuis la fiche d'un tronçon (onglet « Itinéraires &amp; tronçons »).</p></div>`;
+  }
+  return `
+    <div class="view-head"><div><h2>Points bloquants</h2><p>Sujets à arbitrer, personnes pilotes et actions à mener, par tronçon.</p></div></div>
+    <div class="kanban">
+      ${cols.map(c=>{
+        const items = all.filter(b=>b.statut===c);
+        const seg = id=>state.segments.find(s=>s.id===id);
+        return `<div class="kcol">
+          <h3>${esc(BLOCAGE_STATUTS[c])} <span class="kcount">${items.length}</span></h3>
+          ${items.map(b=>`
+            <div class="card blocker-card">
+              <div class="desc">${esc(b.description)}</div>
+              <div class="who">${b.pilote?`Pilote : <strong>${esc(b.pilote)}</strong>`:""}${b.echeance?` · échéance ${esc(b.echeance)}`:""}</div>
+              ${b.action?`<div class="who">Action : ${esc(b.action)}</div>`:""}
+              <div class="foot">
+                <span class="seg" data-open-segment="${b.segmentId}">${esc(segLabel(seg(b.segmentId)))} →</span>
+              </div>
+            </div>
+          `).join("") || `<div class="helpline" style="padding:8px 0;">Aucun.</div>`}
+        </div>`;
+      }).join("")}
+    </div>
+  `;
+}
+
+/* ============================== SEGMENT MODAL ============================== */
+
+let draft = null; // working copy of a segment being edited
+
+function openSegmentModal(segId, itineraryIdForNew){
+  if(segId){
+    draft = JSON.parse(JSON.stringify(state.segments.find(s=>s.id===segId)));
+  } else {
+    const its = segmentsByItinerary(itineraryIdForNew);
+    draft = {
+      id: uid("seg"), itineraryId: itineraryIdForNew, ordre: its.length+1,
+      pointA:"", pointB:"", amenagementType:"itineraire", statut:"prevu", longueurM:null,
+      budgetPrevu:null, budgetRealise:null, etudes:[], travaux:[], pointsBlocage:[], notes:"",
+      coords:[], mapBg:"itineraires",
+    };
+  }
+  renderModal();
+}
+
+function closeModal(){
+  draft = null;
+  const el = document.getElementById("modalRoot");
+  if(el) el.remove();
+}
+
+function renderModal(){
+  let root = document.getElementById("modalRoot");
+  if(!root){ root = document.createElement("div"); root.id="modalRoot"; document.body.appendChild(root); }
+  const isNew = !state.segments.find(s=>s.id===draft.id);
+  root.innerHTML = `
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div class="modal">
+        <div class="modal-head">
+          <h3>${READONLY_EXPORT?"Détail du tronçon":(isNew?"Nouveau tronçon":"Modifier le tronçon")}</h3>
+          <button class="close-x" id="modalClose">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="grid2">
+            <div class="field"><label>Point de départ</label><input id="f_pointA" value="${esc(draft.pointA)}" placeholder="ex. Pornichet" ${READONLY_EXPORT?'disabled':''}></div>
+            <div class="field"><label>Point d'arrivée (jalon)</label><input id="f_pointB" value="${esc(draft.pointB)}" placeholder="ex. Léo Delibes" ${READONLY_EXPORT?'disabled':''}></div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>Type d'aménagement</label>
+              <select id="f_type" ${READONLY_EXPORT?'disabled':''}>${Object.entries(AMENAGEMENT_TYPES).map(([k,v])=>`<option value="${k}" ${draft.amenagementType===k?'selected':''}>${esc(v.short)}</option>`).join("")}</select>
+            </div>
+            <div class="field"><label>Statut</label>
+              <select id="f_statut" ${READONLY_EXPORT?'disabled':''}>${Object.entries(STATUTS).map(([k,v])=>`<option value="${k}" ${draft.statut===k?'selected':''}>${esc(v.label)}</option>`).join("")}</select>
+            </div>
+            <div class="field"><label>Longueur (m)</label><input id="f_longueur" type="number" min="0" value="${draft.longueurM??''}" ${READONLY_EXPORT?'disabled':''}></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label>Budget prévisionnel (€)</label><input id="f_budgetPrevu" type="number" min="0" value="${draft.budgetPrevu??''}" ${READONLY_EXPORT?'disabled':''}></div>
+            <div class="field"><label>Budget réalisé (€)</label><input id="f_budgetRealise" type="number" min="0" value="${draft.budgetRealise??''}" ${READONLY_EXPORT?'disabled':''}></div>
+          </div>
+
+          <div class="subsection">
+            <div class="sh"><h4>Études</h4>${READONLY_EXPORT?'':'<button class="btn small" id="addEtude">+ Ajouter une étude</button>'}</div>
+            ${(draft.etudes||[]).map((e,i)=>`
+              <div class="sub-item">
+                ${READONLY_EXPORT?'':`<button class="close-x rm" data-rm-etude="${i}">✕</button>`}
+                <div class="grid2">
+                  <div class="field"><label>Type</label><select data-etude-field="type" data-i="${i}" ${READONLY_EXPORT?'disabled':''}>${ETUDE_TYPES.map(t=>`<option ${e.type===t?'selected':''}>${esc(t)}</option>`).join("")}</select></div>
+                  <div class="field"><label>Statut</label><select data-etude-field="statut" data-i="${i}" ${READONLY_EXPORT?'disabled':''}>
+                    <option value="prevue" ${e.statut==='prevue'?'selected':''}>Prévue</option>
+                    <option value="en_cours" ${e.statut==='en_cours'?'selected':''}>En cours</option>
+                    <option value="terminee" ${e.statut==='terminee'?'selected':''}>Terminée</option>
+                  </select></div>
+                </div>
+                <div class="grid2">
+                  <div class="field"><label>Début</label><input type="month" data-etude-field="debut" data-i="${i}" value="${monthKey(e.debut)}" ${READONLY_EXPORT?'disabled':''}></div>
+                  <div class="field"><label>Fin</label><input type="month" data-etude-field="fin" data-i="${i}" value="${monthKey(e.fin)}" ${READONLY_EXPORT?'disabled':''}></div>
+                </div>
+              </div>
+            `).join("") || `<div class="helpline">Aucune étude pour l'instant.</div>`}
+          </div>
+
+          <div class="subsection">
+            <div class="sh"><h4>Travaux</h4>${READONLY_EXPORT?'':'<button class="btn small" id="addTravaux">+ Ajouter une phase</button>'}</div>
+            ${(draft.travaux||[]).map((t,i)=>`
+              <div class="sub-item">
+                ${READONLY_EXPORT?'':`<button class="close-x rm" data-rm-travaux="${i}">✕</button>`}
+                <div class="grid2">
+                  <div class="field"><label>Libellé de la phase</label><input data-travaux-field="phase" data-i="${i}" value="${esc(t.phase)}" placeholder="ex. Phase 1" ${READONLY_EXPORT?'disabled':''}></div>
+                  <div class="field"><label>Statut</label><select data-travaux-field="statut" data-i="${i}" ${READONLY_EXPORT?'disabled':''}>
+                    <option value="prevue" ${t.statut==='prevue'?'selected':''}>Prévue</option>
+                    <option value="en_cours" ${t.statut==='en_cours'?'selected':''}>En cours</option>
+                    <option value="terminee" ${t.statut==='terminee'?'selected':''}>Terminée</option>
+                  </select></div>
+                </div>
+                <div class="grid2">
+                  <div class="field"><label>Début</label><input type="month" data-travaux-field="debut" data-i="${i}" value="${monthKey(t.debut)}" ${READONLY_EXPORT?'disabled':''}></div>
+                  <div class="field"><label>Fin</label><input type="month" data-travaux-field="fin" data-i="${i}" value="${monthKey(t.fin)}" ${READONLY_EXPORT?'disabled':''}></div>
+                </div>
+              </div>
+            `).join("") || `<div class="helpline">Aucune phase de travaux pour l'instant.</div>`}
+          </div>
+
+          <div class="subsection">
+            <div class="sh"><h4>Points bloquants</h4>${READONLY_EXPORT?'':'<button class="btn small" id="addBlocage">+ Ajouter</button>'}</div>
+            ${(draft.pointsBlocage||[]).map((b,i)=>`
+              <div class="sub-item">
+                ${READONLY_EXPORT?'':`<button class="close-x rm" data-rm-blocage="${i}">✕</button>`}
+                <div class="field"><label>Description</label><textarea data-blocage-field="description" data-i="${i}" placeholder="ex. Point à valider avec le Maire sur l'emprise foncière" ${READONLY_EXPORT?'disabled':''}>${esc(b.description)}</textarea></div>
+                <div class="grid3">
+                  <div class="field"><label>Pilote</label><input data-blocage-field="pilote" data-i="${i}" value="${esc(b.pilote)}" placeholder="ex. Maire, Finances…" ${READONLY_EXPORT?'disabled':''}></div>
+                  <div class="field"><label>Statut</label><select data-blocage-field="statut" data-i="${i}" ${READONLY_EXPORT?'disabled':''}>${Object.entries(BLOCAGE_STATUTS).map(([k,v])=>`<option value="${k}" ${b.statut===k?'selected':''}>${esc(v)}</option>`).join("")}</select></div>
+                  <div class="field"><label>Échéance</label><input type="month" data-blocage-field="echeance" data-i="${i}" value="${monthKey(b.echeance)}" ${READONLY_EXPORT?'disabled':''}></div>
+                </div>
+                <div class="field"><label>Action à mener</label><input data-blocage-field="action" data-i="${i}" value="${esc(b.action)}" placeholder="ex. Arbitrage à obtenir, validation à faire signer…" ${READONLY_EXPORT?'disabled':''}></div>
+              </div>
+            `).join("") || `<div class="helpline">Aucun point bloquant pour l'instant.</div>`}
+          </div>
+
+          <div class="field"><label>Informations complémentaires</label><textarea id="f_notes" placeholder="Notes libres…" ${READONLY_EXPORT?'disabled':''}>${esc(draft.notes)}</textarea></div>
+          ${(!draft.coords || draft.coords.length<2) ? `<div class="note">Ce tronçon n'est pas encore positionné sur la carte.${READONLY_EXPORT?'':" Fermez cette fiche puis utilisez « Tracer un tronçon » dans l'onglet Carte."}</div>` : `
+            <div class="note" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <span>Tronçon positionné sur le fond « ${esc(MAP_BACKGROUNDS[draft.mapBg]?.label||draft.mapBg)} » (${draft.coords.length} points).</span>
+              ${READONLY_EXPORT?'':'<button class="btn small danger" id="deleteTrace" type="button">Supprimer le tracé</button>'}
+            </div>`}
+        </div>
+        <div class="modal-foot">
+          <div>${(!READONLY_EXPORT && !isNew)?`<button class="btn danger" id="deleteSegment">Supprimer ce tronçon</button>`:""}</div>
+          <div style="display:flex;gap:8px;">
+            ${READONLY_EXPORT ? `<button class="btn primary" id="modalCancel">Fermer</button>` : `
+            <button class="btn" id="modalCancel">Annuler</button>
+            <button class="btn primary" id="modalSave">Enregistrer</button>`}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  wireModal();
+}
+
+function wireModal(){
+  const q = s=>document.querySelector(s);
+  q("#modalClose").onclick = closeModal;
+  q("#modalCancel").onclick = closeModal;
+  document.getElementById("modalBackdrop").addEventListener("click",(e)=>{ if(e.target.id==="modalBackdrop") closeModal(); });
+
+  if(q("#addEtude")) q("#addEtude").onclick = ()=>{ draft.etudes = draft.etudes||[]; draft.etudes.push({type:ETUDE_TYPES[0],statut:"prevue",debut:"",fin:""}); syncFormIntoDraft(); renderModal(); };
+  if(q("#addTravaux")) q("#addTravaux").onclick = ()=>{ draft.travaux = draft.travaux||[]; draft.travaux.push({phase:"",statut:"prevue",debut:"",fin:""}); syncFormIntoDraft(); renderModal(); };
+  if(q("#addBlocage")) q("#addBlocage").onclick = ()=>{ draft.pointsBlocage = draft.pointsBlocage||[]; draft.pointsBlocage.push({id:uid("blk"),description:"",pilote:"",action:"",statut:"ouvert",echeance:""}); syncFormIntoDraft(); renderModal(); };
+
+  document.querySelectorAll("[data-rm-etude]").forEach(b=>b.onclick=()=>{ syncFormIntoDraft(); draft.etudes.splice(+b.dataset.rmEtude,1); renderModal(); });
+  document.querySelectorAll("[data-rm-travaux]").forEach(b=>b.onclick=()=>{ syncFormIntoDraft(); draft.travaux.splice(+b.dataset.rmTravaux,1); renderModal(); });
+  document.querySelectorAll("[data-rm-blocage]").forEach(b=>b.onclick=()=>{ syncFormIntoDraft(); draft.pointsBlocage.splice(+b.dataset.rmBlocage,1); renderModal(); });
+
+  if(document.getElementById("deleteSegment")){
+    document.getElementById("deleteSegment").onclick = ()=>{
+      showConfirm("Supprimer définitivement ce tronçon ?", ()=>{ deleteSegment(draft.id); closeModal(); });
+    };
+  }
+  if(document.getElementById("deleteTrace")){
+    document.getElementById("deleteTrace").onclick = ()=>{
+      // Clears only the geometry (coords) — every other field on the tronçon
+      // (aménagement, statut, budget, études, travaux, blocages, notes) stays.
+      showConfirm("Retirer ce tronçon de la carte ? Le reste de la fiche (aménagement, budget, études, travaux, points bloquants, notes) sera conservé.", ()=>{
+        syncFormIntoDraft();
+        draft.coords = [];
+        saveSegment(draft);
+        renderModal();
+      });
+    };
+  }
+  if(q("#modalSave")) q("#modalSave").onclick = ()=>{ syncFormIntoDraft(); saveSegment(draft); closeModal(); };
+}
+
+function syncFormIntoDraft(){
+  const q = s=>document.querySelector(s);
+  if(!q("#f_pointA")) return;
+  draft.pointA = q("#f_pointA").value;
+  draft.pointB = q("#f_pointB").value;
+  draft.amenagementType = q("#f_type").value;
+  draft.statut = q("#f_statut").value;
+  draft.longueurM = q("#f_longueur").value ? Number(q("#f_longueur").value) : null;
+  draft.budgetPrevu = q("#f_budgetPrevu").value ? Number(q("#f_budgetPrevu").value) : null;
+  draft.budgetRealise = q("#f_budgetRealise").value ? Number(q("#f_budgetRealise").value) : null;
+  draft.notes = q("#f_notes").value;
+  document.querySelectorAll("[data-etude-field]").forEach(el=>{ draft.etudes[+el.dataset.i][el.dataset.etudeField]=el.value; });
+  document.querySelectorAll("[data-travaux-field]").forEach(el=>{ draft.travaux[+el.dataset.i][el.dataset.travauxField]=el.value; });
+  document.querySelectorAll("[data-blocage-field]").forEach(el=>{ draft.pointsBlocage[+el.dataset.i][el.dataset.blocageField]=el.value; });
+}
+
+/* ============================== ITINERARY RENAME MODAL ============================== */
+
+function openRenameModal(itId){
+  const it = state.itineraries.find(i=>i.id===itId);
+  let root = document.getElementById("modalRoot");
+  if(!root){ root = document.createElement("div"); root.id="modalRoot"; document.body.appendChild(root); }
+  root.innerHTML = `
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div class="modal" style="max-width:480px;">
+        <div class="modal-head"><h3>Renommer l'itinéraire</h3><button class="close-x" id="modalClose">✕</button></div>
+        <div class="modal-body">
+          <div class="field"><label>Nom</label><input id="f_itNom" value="${esc(it.nom)}"></div>
+          <div class="field"><label>Description</label><textarea id="f_itDesc" placeholder="ex. Le Pouliguen ↔ La Baule, front de mer">${esc(it.description)}</textarea></div>
+        </div>
+        <div class="modal-foot"><div></div><div style="display:flex;gap:8px;">
+          <button class="btn" id="modalCancel">Annuler</button>
+          <button class="btn primary" id="modalSave">Enregistrer</button>
+        </div></div>
+      </div>
+    </div>`;
+  document.getElementById("modalClose").onclick = closeModal;
+  document.getElementById("modalCancel").onclick = closeModal;
+  document.getElementById("modalBackdrop").addEventListener("click",(e)=>{ if(e.target.id==="modalBackdrop") closeModal(); });
+  document.getElementById("modalSave").onclick = ()=>{
+    // Same rule as everywhere else: clone before editing, never write into
+    // an object that came straight from state.itineraries (it may be frozen).
+    const updated = {
+      ...it,
+      nom: document.getElementById("f_itNom").value || it.nom,
+      description: document.getElementById("f_itDesc").value,
+    };
+    saveItinerary(updated);
+    closeModal();
+  };
+}
+
+/* ============================== GLOBAL EVENT WIRING ============================== */
+
+function afterRender(){
+  // nav tab clicks are wired in renderNav already
+  document.querySelectorAll("[data-open-segment]").forEach(el=>{
+    el.addEventListener("click",(e)=>{ e.stopPropagation(); openSegmentModal(el.dataset.openSegment); });
+  });
+  document.querySelectorAll("[data-add-segment]").forEach(el=>{
+    el.addEventListener("click",()=>openSegmentModal(null, el.dataset.addSegment));
+  });
+  document.querySelectorAll("[data-rename-it]").forEach(el=>{
+    el.addEventListener("click",()=>openRenameModal(el.dataset.renameIt));
+  });
+  document.querySelectorAll("[data-bg]").forEach(el=>{
+    el.addEventListener("click",()=>{ state.map.bg = el.dataset.bg; state.map.selectedSegmentId=null; renderAll(); });
+  });
+
+  const drawSelect = document.getElementById("drawSegmentSelect");
+  if(drawSelect){
+    drawSelect.addEventListener("change",()=>{
+      if(drawSelect.value){
+        state.map.drawingSegmentId = drawSelect.value;
+        const seg = state.segments.find(s=>s.id===drawSelect.value);
+        // start from the existing trace so a segment can be corrected, not just redrawn from scratch
+        state.map.draftPoints = (seg && seg.coords && seg.coords.length>=2) ? seg.coords.map(p=>({...p})) : [];
+        renderAll();
+      }
+    });
+  }
+  const toggleDim = document.getElementById("toggleDim");
+  if(toggleDim) toggleDim.addEventListener("change",()=>{
+    state.map.dimmed = toggleDim.checked;
+    const img = document.getElementById("mapImg");
+    if(img) img.classList.toggle("dimmed", state.map.dimmed);
+  });
+
+  wireMapInteraction();
+  if(document.getElementById("mapSvg")) drawMap();
+}
+
+/* Map drag/click state lives outside wireMapInteraction so the window-level
+   listeners are registered exactly once at boot, never re-added on every
+   render (the stage element itself is recreated each render, so only its
+   own mousedown/touchstart listener needs rewiring each time). */
+let mapDrag = null;
+const DRAG_THRESHOLD = 8;
+
+function eventPoint(e){
+  if(e.touches && e.touches.length) return {x:e.touches[0].clientX, y:e.touches[0].clientY};
+  if(e.changedTouches && e.changedTouches.length) return {x:e.changedTouches[0].clientX, y:e.changedTouches[0].clientY};
+  return {x:e.clientX, y:e.clientY};
+}
+
+// A point is added from the exact screen position where the mouse/touch
+// interaction STARTED (mapDrag.startX/Y), not wherever it ends up — this
+// still works even though the same gesture is now also used to pan.
+function addDraftPointFromPoint(p){
+  const stage = document.getElementById("mapStage");
+  if(!stage) return;
+  const rect = stage.getBoundingClientRect();
+  const x = (p.x-rect.left)/rect.width*100;
+  const y = (p.y-rect.top)/rect.height*100;
+  state.map.draftPoints.push({x:Math.round(Math.min(100,Math.max(0,x))*100)/100, y:Math.round(Math.min(100,Math.max(0,y))*100)/100});
+  drawMap();
+  updateDrawBanner();
+}
+
+// Mouse handling is unified again for panning AND tracing, as it was before
+// the "0 points enregistrés" bug: mousedown arms a possible drag, mousemove
+// pans once real movement crosses DRAG_THRESHOLD, and mouseup either finishes
+// a pan (if it moved) or — while tracing — adds a point at the start position
+// (if it never moved, i.e. it was a genuine click, not a drag). The actual
+// root cause of the "0 points" and "disappears on save" bugs turned out to be
+// unrelated (frozen shared-db documents being mutated in place, fixed in
+// saveSegment/saveItinerary/finishDraw) — not this click-vs-drag handling —
+// so panning-while-tracing can safely come back.
+function startDragOrPoint(e){
+  if(e.type==="mousedown"){
+    if(e.button!==0) return;
+    e.preventDefault();
+  }
+  const p = eventPoint(e);
+  mapDrag = {startX:p.x, startY:p.y, origTx:state.map.tx, origTy:state.map.ty, moved:false};
+}
+
+function onMapDragMove(e){
+  if(!mapDrag) return;
+  const stage = document.getElementById("mapStage");
+  if(!stage) return;
+  const p = eventPoint(e);
+  const dx = p.x-mapDrag.startX, dy = p.y-mapDrag.startY;
+  if(Math.abs(dx)>DRAG_THRESHOLD || Math.abs(dy)>DRAG_THRESHOLD){
+    mapDrag.moved = true;
+    stage.classList.add("panning");
+    state.map.tx = mapDrag.origTx+dx;
+    state.map.ty = mapDrag.origTy+dy;
+    stage.style.transform = `translate(${state.map.tx}px,${state.map.ty}px) scale(${state.map.zoom})`;
+  }
+}
+
+function onMapDragEnd(){
+  const stage = document.getElementById("mapStage");
+  if(stage) stage.classList.remove("panning");
+  if(mapDrag && !mapDrag.moved && state.map.drawingSegmentId){
+    addDraftPointFromPoint({x:mapDrag.startX, y:mapDrag.startY});
+  }
+  mapDrag = null;
+}
+
+window.addEventListener("mousemove", onMapDragMove);
+window.addEventListener("mouseup", onMapDragEnd);
+window.addEventListener("touchmove", onMapDragMove, {passive:true});
+window.addEventListener("touchend", onMapDragEnd);
+
+function updateDrawBanner(){
+  const el = document.getElementById("drawBannerText");
+  if(!el) return;
+  const seg = state.segments.find(s=>s.id===state.map.drawingSegmentId);
+  el.innerHTML = `✏️ Tracé en cours pour <strong>${esc(segLabel(seg))}</strong> — cliquez sur le plan pour ajouter des points (${state.map.draftPoints.length} point${state.map.draftPoints.length>1?'s':''}), glissez pour déplacer la vue.`;
+}
+
+function wireMapInteraction(){
+  const viewport = document.getElementById("mapViewport");
+  const stage = document.getElementById("mapStage");
+  const img = document.getElementById("mapImg");
+  if(!viewport || !stage || !img) return;
+
+  const applyTransform = ()=>{ stage.style.transform = `translate(${state.map.tx}px,${state.map.ty}px) scale(${state.map.zoom})`; };
+  const fitHeight = ()=>{
+    if(img.naturalWidth) viewport.style.height = (viewport.clientWidth * img.naturalHeight/img.naturalWidth) + "px";
+  };
+  if(img.complete) fitHeight(); else img.addEventListener("load", fitHeight);
+  window.addEventListener("resize", fitHeight);
+
+  const clampZoom = z=>Math.min(6, Math.max(1, z));
+  const zoomAt = (cx, cy, factor)=>{
+    const newZoom = clampZoom(state.map.zoom*factor);
+    const ratio = newZoom/state.map.zoom;
+    state.map.tx = cx - (cx-state.map.tx)*ratio;
+    state.map.ty = cy - (cy-state.map.ty)*ratio;
+    state.map.zoom = newZoom;
+    applyTransform();
+  };
+
+  viewport.addEventListener("wheel",(e)=>{
+    e.preventDefault();
+    const rect = viewport.getBoundingClientRect();
+    zoomAt(e.clientX-rect.left, e.clientY-rect.top, e.deltaY<0?1.18:1/1.18);
+  },{passive:false});
+
+  document.getElementById("zoomIn").onclick = ()=>{ const r=viewport.getBoundingClientRect(); zoomAt(r.width/2,r.height/2,1.4); };
+  document.getElementById("zoomOut").onclick = ()=>{ const r=viewport.getBoundingClientRect(); zoomAt(r.width/2,r.height/2,1/1.4); };
+  document.getElementById("zoomReset").onclick = ()=>{ state.map.zoom=1; state.map.tx=0; state.map.ty=0; applyTransform(); };
+
+  // Plain mouse/touch events on purpose — NOT the Pointer Events + setPointerCapture
+  // combo we used before. That API can silently throw or no-op once the page is
+  // running framed inside the artifact host, which swallowed every click and made
+  // clicks add zero points. mousedown/mousemove/mouseup (and touch equivalents)
+  // are the classic, dependency-free way to tell a click from a drag and always work.
+  stage.addEventListener("mousedown", startDragOrPoint);
+  stage.addEventListener("touchstart", startDragOrPoint, {passive:true});
+
+  const nudge = (dx,dy)=>{ state.map.tx += dx; state.map.ty += dy; applyTransform(); };
+  const nb = (id,dx,dy)=>{ const b=document.getElementById(id); if(b) b.onclick=()=>nudge(dx,dy); };
+  nb("nudgeUp",0,60); nb("nudgeDown",0,-60); nb("nudgeLeft",60,0); nb("nudgeRight",-60,0);
+
+  const undoBtn = document.getElementById("undoPoint");
+  if(undoBtn) undoBtn.onclick = ()=>{ state.map.draftPoints.pop(); drawMap(); updateDrawBanner(); };
+  const cancelBtn = document.getElementById("cancelDraw");
+  if(cancelBtn) cancelBtn.onclick = ()=>{ state.map.drawingSegmentId=null; state.map.draftPoints=[]; renderAll(); };
+  const finishBtn = document.getElementById("finishDraw");
+  if(finishBtn) finishBtn.onclick = ()=>{
+    if(state.map.draftPoints.length>=2){
+      // Clone before editing: a segment coming from the shared database is
+      // delivered frozen (read-only). Writing straight into it silently does
+      // nothing in this script's non-strict mode — no error, but the coords
+      // never actually change, which is exactly the "disappears on save" bug.
+      const orig = state.segments.find(s=>s.id===state.map.drawingSegmentId);
+      const seg = {...orig, coords: state.map.draftPoints, mapBg: state.map.bg};
+      saveSegment(seg);
+      state.map.selectedSegmentId = seg.id;
+      state.map.drawingSegmentId=null; state.map.draftPoints=[];
+      renderAll();
+      showToast(`Tracé enregistré pour « ${segLabel(seg)} » — ${seg.coords.length} points.`);
+    } else {
+      showToast("Ajoutez au moins 2 points avant d'enregistrer.", true);
+    }
+  };
+}
+
+function showToast(message, isWarning){
+  let el = document.getElementById("toast");
+  if(el) el.remove();
+  el = document.createElement("div");
+  el.id = "toast";
+  el.className = "toast" + (isWarning ? " warn" : "");
+  el.textContent = message;
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add("show"));
+  setTimeout(()=>{ el.classList.remove("show"); setTimeout(()=>el.remove(), 300); }, 3200);
+}
+
+// Published pages run sandboxed, where window.confirm()/alert() are commonly
+// blocked outright (they can silently no-op instead of throwing) — that was
+// the real reason "Supprimer le tracé" appeared to do nothing. This is a
+// self-contained replacement that never depends on native browser dialogs.
+function showConfirm(message, onConfirm){
+  let root = document.getElementById("confirmRoot");
+  if(root) root.remove();
+  root = document.createElement("div");
+  root.id = "confirmRoot";
+  root.innerHTML = `
+    <div class="confirm-backdrop" id="confirmBackdrop">
+      <div class="confirm-box">
+        <p>${esc(message)}</p>
+        <div class="confirm-actions">
+          <button class="btn" id="confirmNo">Annuler</button>
+          <button class="btn danger" id="confirmYes">Confirmer</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(root);
+  const close = ()=>root.remove();
+  document.getElementById("confirmNo").onclick = close;
+  document.getElementById("confirmBackdrop").addEventListener("click",(e)=>{ if(e.target.id==="confirmBackdrop") close(); });
+  document.getElementById("confirmYes").onclick = ()=>{ close(); onConfirm(); };
+}
+
+/* ============================== BOOT ============================== */
+
+initDb();
+</script>
+
+</html>
